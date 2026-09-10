@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Concurrent Vote Test</title>
+</head>
+
+<body>
+  <h1>Concurrent Double-Voting Test</h1>
+
+  <p>
+    Test ini akan mengirim dua voting
+    hampir bersamaan menggunakan voter yang sama.
+  </p>
+
+  <button id="runTestButton">
+    JALANKAN TEST
+  </button>
+
+  <p id="status"></p>
+
+  <h2>Request A — candidate-001</h2>
+
+  <pre id="resultA"></pre>
+
+  <h2>Request B — candidate-002</h2>
+
+  <pre id="resultB"></pre>
+
+  <script
+    type="module"
+    src="/src/js/test-concurrent-vote.js"
+  ></script>
+</body>
+</html>

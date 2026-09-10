@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Profil Kandidat | E-Voting Sekolah</title>
+
+  <link
+    rel="stylesheet"
+    href="/src/css/style.css"
+  >
+</head>
+
+<body class="candidate-profile-page">
+
+  <header class="main-navbar">
+
+    <div class="navbar-brand">
+
+      <div class="navbar-logo">
+        LOGO
+      </div>
+
+      <div>
+        <p class="navbar-label">
+          E-VOTING SEKOLAH
+        </p>
+
+        <h1 class="navbar-title">
+          Profil Kandidat
+        </h1>
+      </div>
+
+    </div>
+
+    <button
+      id="logoutButton"
+      class="logout-button"
+      type="button"
+    >
+      KELUAR
+    </button>
+
+  </header>
+
+
+  <main class="candidate-profile-main">
+
+    <p
+      id="profileMessage"
+      class="candidate-message"
+      aria-live="polite"
+    >
+      Memuat profil kandidat...
+    </p>
+
+
+    <section
+      id="profileContent"
+      class="candidate-profile-card"
+      hidden
+    >
+
+      <div class="profile-photo-section">
+
+        <div
+          id="profilePhoto"
+          class="profile-photo-wrapper"
+        >
+        </div>
+
+        <div class="profile-number-box">
+          <span>KANDIDAT</span>
+
+          <strong id="profileNumber">
+            -
+          </strong>
+        </div>
+
+      </div>
+
+
+      <div class="profile-information">
+
+        <div class="profile-heading">
+
+          <p class="section-label profile-section-label">
+            PROFIL KANDIDAT
+          </p>
+
+          <h2 id="profileName">
+            -
+          </h2>
+
+          <p
+            id="profileClass"
+            class="profile-class"
+          >
+            -
+          </p>
+
+        </div>
+
+
+        <div class="profile-tabs">
+
+          <button
+            type="button"
+            class="profile-tab active"
+            data-tab="vision"
+          >
+            VISI
+          </button>
+
+          <button
+            type="button"
+            class="profile-tab"
+            data-tab="mission"
+          >
+            MISI
+          </button>
+
+          <button
+            type="button"
+            class="profile-tab"
+            data-tab="workPrograms"
+          >
+            PROGRAM KERJA
+          </button>
+
+        </div>
+
+
+        <div
+          id="profileTabContent"
+          class="profile-tab-content"
+        >
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section
+      id="profileActions"
+      class="profile-actions"
+      hidden
+    >
+
+      <button
+        id="otherProfilesButton"
+        class="secondary-action-button"
+        type="button"
+      >
+        LIHAT PROFIL LAIN
+      </button>
+
+    </section>
+
+  </main>
+
+
+  <script
+    type="module"
+    src="/src/js/candidate-profile.js"
+  ></script>
+
+</body>
+</html>

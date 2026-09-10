@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Daftar Kandidat | E-Voting Sekolah</title>
+
+  <link
+    rel="stylesheet"
+    href="/src/css/style.css"
+  >
+</head>
+
+<body class="candidates-page">
+
+  <header class="main-navbar">
+
+    <div class="navbar-brand">
+      <div class="navbar-logo">
+        LOGO
+      </div>
+
+      <div>
+        <p class="navbar-label">
+          E-VOTING SEKOLAH
+        </p>
+
+        <h1 class="navbar-title">
+          Daftar Kandidat
+        </h1>
+      </div>
+    </div>
+
+    <button
+      id="logoutButton"
+      class="logout-button"
+      type="button"
+    >
+      KELUAR
+    </button>
+
+  </header>
+
+  <main class="candidates-main">
+
+    <section class="candidates-heading">
+
+      <p class="section-label">
+        PEMILIHAN KETUA OSIS 2026
+      </p>
+
+      <h2>
+        Kenali Kandidat Pilihanmu
+      </h2>
+
+      <p>
+        Pelajari profil, visi, misi, dan program kerja
+        setiap kandidat sebelum menentukan pilihan.
+      </p>
+
+    </section>
+
+    <section
+      id="candidateList"
+      class="candidate-list"
+    >
+      <p class="candidate-loading">
+        Memuat kandidat...
+      </p>
+    </section>
+
+    <p
+      id="candidateMessage"
+      class="candidate-message"
+      aria-live="polite"
+    ></p>
+
+    <section class="candidate-actions">
+
+      <button
+        id="tutorialButton"
+        class="secondary-action-button"
+        type="button"
+      >
+        TUTORIAL
+      </button>
+
+      <button
+        id="nextButton"
+        class="primary-action-button"
+        type="button"
+      >
+        NEXT
+      </button>
+
+    </section>
+
+  </main>
+
+  <script
+    type="module"
+    src="/src/js/candidates.js"
+  ></script>
+
+</body>
+</html>

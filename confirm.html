@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Konfirmasi Pilihan | E-Voting Sekolah</title>
+
+  <link
+    rel="stylesheet"
+    href="/src/css/style.css"
+  >
+</head>
+
+<body class="confirm-page">
+
+  <header class="main-navbar">
+
+    <div class="navbar-brand">
+
+      <div class="navbar-logo">
+        LOGO
+      </div>
+
+      <div>
+        <p class="navbar-label">
+          E-VOTING SEKOLAH
+        </p>
+
+        <h1 class="navbar-title">
+          Konfirmasi Pilihan
+        </h1>
+      </div>
+
+    </div>
+
+    <button
+      id="logoutButton"
+      class="logout-button"
+      type="button"
+    >
+      KELUAR
+    </button>
+
+  </header>
+
+
+  <main class="confirm-main">
+
+    <section class="confirm-heading">
+
+      <p class="section-label">
+        KONFIRMASI AKHIR
+      </p>
+
+      <h2>
+        Apakah Pilihan Anda Sudah Benar?
+      </h2>
+
+      <p>
+        Periksa kembali kandidat yang telah Anda pilih.
+        Setelah suara dikirim, pilihan tidak dapat diubah.
+      </p>
+
+    </section>
+
+
+    <p
+      id="confirmMessage"
+      class="candidate-message"
+      aria-live="polite"
+    >
+      Memuat pilihan...
+    </p>
+
+
+    <section
+      id="confirmCard"
+      class="confirm-card"
+      hidden
+    >
+
+      <div
+        id="confirmPhoto"
+        class="confirm-photo-wrapper"
+      >
+      </div>
+
+
+      <div class="confirm-candidate-info">
+
+        <p class="confirm-label">
+          PILIHAN ANDA
+        </p>
+
+        <div class="confirm-number-row">
+
+          <span>
+            KANDIDAT
+          </span>
+
+          <strong id="confirmNumber">
+            -
+          </strong>
+
+        </div>
+
+        <h3 id="confirmName">
+          -
+        </h3>
+
+        <p
+          id="confirmClass"
+          class="confirm-class"
+        >
+          -
+        </p>
+
+
+        <div class="confirm-warning">
+
+          <strong>
+            Perhatian
+          </strong>
+
+          <p>
+            Pastikan kandidat di atas benar.
+            Suara tidak dapat diubah setelah
+            Anda mengonfirmasikan pilihan.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section
+      id="confirmActions"
+      class="confirm-actions"
+      hidden
+    >
+
+      <button
+        id="cancelButton"
+        class="secondary-action-button"
+        type="button"
+      >
+        BATAL
+      </button>
+
+      <button
+        id="submitVoteButton"
+        class="primary-action-button"
+        type="button"
+      >
+        YA, SAYA YAKIN
+      </button>
+
+    </section>
+
+  </main>
+
+
+  <script
+    type="module"
+    src="/src/js/confirm.js"
+  ></script>
+
+</body>
+</html>

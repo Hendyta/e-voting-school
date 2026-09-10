@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+functions/node_modules/
+
+# Build output
+dist/
+
+# Environment / secrets
+.env
+.env.*
+*.local
+
+# Local voter secrets / generated production data
+voter-codes.local.json
+functions/voter-codes.local.json
+functions/voters-production-codes.csv
+functions/voters-production-firestore.json
+functions/voters-production-source.csv
+
+# Firebase debug logs
+firebase-debug.log
+firebase-debug.*.log
+firestore-debug.log
+firestore-debug.*.log
+ui-debug.log
+ui-debug.*.log
+
+# Firebase emulator data
+firebase-export/
+emulator-data/
+
+# VS Code / Visual Studio local files
+.vs/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db

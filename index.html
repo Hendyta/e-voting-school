@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="Sistem E-Voting Sekolah"
+  >
+
+  <title>Login | E-Voting Sekolah</title>
+
+  <link
+    rel="stylesheet"
+    href="/src/css/style.css"
+  >
+</head>
+
+<body class="login-page">
+
+  <main class="login-container">
+
+    <section class="login-card">
+
+      <div class="login-header">
+
+        <div class="school-logo">
+          LOGO
+        </div>
+
+        <div class="login-title">
+          <p class="login-label">
+            SISTEM PEMILIHAN DIGITAL
+          </p>
+
+          <h1>
+            E-Voting Sekolah
+          </h1>
+
+          <p class="login-description">
+            Masukkan kode voting yang telah diberikan
+            untuk memulai proses pemilihan.
+          </p>
+        </div>
+
+      </div>
+
+      <form
+        id="loginForm"
+        class="login-form"
+        novalidate
+      >
+
+        <div class="form-group">
+
+          <label for="voterCode">
+            Kode Voting
+          </label>
+
+          <input
+            type="text"
+            id="voterCode"
+            name="voterCode"
+            placeholder="Contoh: S-K7P4X9"
+            autocomplete="off"
+            spellcheck="false"
+            maxlength="8"
+            required
+          >
+
+        </div>
+
+        <p
+          id="message"
+          class="login-message"
+          aria-live="polite"
+        ></p>
+
+        <button
+          type="submit"
+          id="loginButton"
+          class="login-button"
+        >
+          MASUK
+        </button>
+
+      </form>
+
+      <p class="login-help">
+        Gunakan kode voting pribadi Anda.
+        Satu kode hanya dapat digunakan untuk satu kali voting.
+      </p>
+
+    </section>
+
+  </main>
+
+  <script
+    type="module"
+    src="/src/js/main.js"
+  ></script>
+
+</body>
+</html>

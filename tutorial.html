@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Tutorial Voting | E-Voting Sekolah</title>
+
+  <link
+    rel="stylesheet"
+    href="/src/css/style.css"
+  >
+</head>
+
+<body class="tutorial-page">
+
+  <header class="main-navbar">
+
+    <div class="navbar-brand">
+
+      <div class="navbar-logo">
+        LOGO
+      </div>
+
+      <div>
+        <p class="navbar-label">
+          E-VOTING SEKOLAH
+        </p>
+
+        <h1 class="navbar-title">
+          Tutorial Voting
+        </h1>
+      </div>
+
+    </div>
+
+    <button
+      id="logoutButton"
+      class="logout-button"
+      type="button"
+    >
+      KELUAR
+    </button>
+
+  </header>
+
+
+  <main class="tutorial-main">
+
+    <section class="tutorial-heading">
+
+      <p class="section-label">
+        PANDUAN PEMILIHAN
+      </p>
+
+      <h2>
+        Cara Melakukan Voting
+      </h2>
+
+      <p>
+        Ikuti lima langkah berikut agar proses voting
+        berjalan dengan benar.
+      </p>
+
+    </section>
+
+
+    <section class="tutorial-card">
+
+      <div class="tutorial-progress">
+
+        <span id="tutorialStepNumber">
+          LANGKAH 1 DARI 5
+        </span>
+
+        <div class="tutorial-progress-track">
+          <div
+            id="tutorialProgressBar"
+            class="tutorial-progress-bar"
+          ></div>
+        </div>
+
+      </div>
+
+
+      <div
+        id="tutorialContent"
+        class="tutorial-content"
+      >
+      </div>
+
+
+      <div class="tutorial-navigation">
+
+        <button
+          id="previousButton"
+          class="secondary-action-button"
+          type="button"
+        >
+          SEBELUMNYA
+        </button>
+
+        <button
+          id="nextTutorialButton"
+          class="primary-action-button"
+          type="button"
+        >
+          SELANJUTNYA
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <p
+      id="tutorialMessage"
+      class="candidate-message"
+      aria-live="polite"
+    ></p>
+
+  </main>
+
+
+  <script
+    type="module"
+    src="/src/js/tutorial.js"
+  ></script>
+
+</body>
+</html>

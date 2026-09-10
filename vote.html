@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Pilih Kandidat | E-Voting Sekolah</title>
+
+  <link
+    rel="stylesheet"
+    href="/src/css/style.css"
+  >
+</head>
+
+<body class="vote-page">
+
+  <header class="main-navbar">
+
+    <div class="navbar-brand">
+
+      <div class="navbar-logo">
+        LOGO
+      </div>
+
+      <div>
+        <p class="navbar-label">
+          E-VOTING SEKOLAH
+        </p>
+
+        <h1 class="navbar-title">
+          Pilih Kandidat
+        </h1>
+      </div>
+
+    </div>
+
+    <button
+      id="logoutButton"
+      class="logout-button"
+      type="button"
+    >
+      KELUAR
+    </button>
+
+  </header>
+
+
+  <main class="vote-main">
+
+    <section class="vote-heading">
+
+      <p class="section-label">
+        TENTUKAN PILIHAN
+      </p>
+
+      <h2>
+        Pilih Satu Kandidat
+      </h2>
+
+      <p>
+        Pastikan kandidat yang Anda pilih sudah sesuai.
+        Pilihan masih dapat diubah sebelum dikonfirmasi.
+      </p>
+
+    </section>
+
+
+    <section
+      id="voteCandidateList"
+      class="vote-candidate-list"
+    >
+      <p class="candidate-loading">
+        Memuat kandidat...
+      </p>
+    </section>
+
+
+    <p
+      id="voteMessage"
+      class="candidate-message"
+      aria-live="polite"
+    ></p>
+
+
+    <section class="vote-bottom">
+
+      <div class="selected-vote-info">
+
+        <span>
+          PILIHAN ANDA
+        </span>
+
+        <strong id="selectedCandidateText">
+          Belum ada kandidat dipilih
+        </strong>
+
+      </div>
+
+
+      <button
+        id="continueVoteButton"
+        class="primary-action-button"
+        type="button"
+        disabled
+      >
+        KONFIRMASI PILIHAN
+      </button>
+
+    </section>
+
+  </main>
+
+
+  <script
+    type="module"
+    src="/src/js/vote.js"
+  ></script>
+
+</body>
+</html>
