@@ -36,3 +36,17 @@ emulator-data/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Railway backend local secrets
+railway-backend/service-account.local.json
+railway-backend/.env
+railway-backend/.env.*
+
+# Demo voter access codes
+railway-backend/demo-voter-codes.local.json
+
+# Demo pembina 30 peserta
+railway-backend/demo-30-voter-codes.local.csv
+
+# Firebase Admin credentials - NEVER COMMIT
+railway-backend/service-account*.json

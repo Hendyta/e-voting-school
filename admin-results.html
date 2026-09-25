@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Hasil Pemilihan | E-Voting</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b100d;
+      color: #ffffff;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: fixed;
+      width: 240px;
+      height: 100vh;
+      padding: 28px 20px;
+      background: #101713;
+      border-right: 1px solid #28322b;
+    }
+
+    .brand {
+      margin-bottom: 40px;
+    }
+
+    .brand h2 {
+      margin-bottom: 5px;
+    }
+
+    .brand span {
+      color: #75b986;
+      font-size: 13px;
+    }
+
+    .nav a {
+      display: block;
+      padding: 13px 14px;
+      margin-bottom: 8px;
+      border-radius: 9px;
+      color: #b8c1bb;
+      text-decoration: none;
+    }
+
+    .nav a.active {
+      background: #245f37;
+      color: white;
+    }
+
+    .main {
+      margin-left: 240px;
+      padding: 34px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .topbar p {
+      color: #aab3ad;
+      margin-top: 6px;
+    }
+
+    #logoutButton {
+      background: transparent;
+      color: white;
+      border: 1px solid #445048;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .summary-card {
+      background: #121a15;
+      border: 1px solid #29362e;
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .summary-card p {
+      color: #aeb7b1;
+      margin-bottom: 9px;
+      font-size: 13px;
+    }
+
+    .summary-card h2 {
+      font-size: 30px;
+    }
+
+    .result-section {
+      background: #121a15;
+      border: 1px solid #29362e;
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .result-section h2 {
+      margin-bottom: 24px;
+    }
+
+    .candidate-result {
+      padding: 20px 0;
+      border-bottom: 1px solid #29332c;
+    }
+
+    .candidate-result:last-child {
+      border-bottom: none;
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 12px;
+    }
+
+    .candidate-number {
+      color: #d8b95b;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .candidate-name {
+      font-size: 21px;
+      font-weight: bold;
+    }
+
+    .vote-number {
+      text-align: right;
+    }
+
+    .vote-number strong {
+      display: block;
+      font-size: 23px;
+    }
+
+    .vote-number span {
+      color: #aeb7b1;
+      font-size: 13px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 12px;
+      background: #0a100c;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      background: #3e9c59;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    #resultMessage {
+      display: none;
+      margin-bottom: 20px;
+      padding: 14px;
+      background: rgba(180, 50, 50, 0.15);
+      border: 1px solid #753b3b;
+      border-radius: 9px;
+      color: #ffb2b2;
+    }
+
+    .note {
+      color: #aeb7b1;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+      }
+
+      .main {
+        margin-left: 0;
+        padding: 22px;
+      }
+
+      .summary {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <aside class="sidebar">
+
+    <div class="brand">
+      <h2>E-Voting</h2>
+      <span>ADMINISTRATOR</span>
+    </div>
+
+    <nav class="nav">
+
+      <a href="/admin-dashboard.html">
+        Dashboard
+      </a>
+
+      <a href="/admin-statistics.html">
+        Statistik
+      </a>
+
+      <a href="/admin-candidates.html">
+        Kandidat
+      </a>
+
+      <a href="/admin-voters.html">
+        Pemilih
+      </a>
+
+      <a
+        href="/admin-results.html"
+        class="active"
+      >
+        Hasil
+      </a>
+
+    </nav>
+
+  </aside>
+
+  <main class="main">
+
+    <header class="topbar">
+
+      <div>
+        <h1>Hasil Pemilihan</h1>
+
+        <p>
+          Rekap perolehan suara kandidat
+        </p>
+      </div>
+
+      <button id="logoutButton">
+        Keluar
+      </button>
+
+    </header>
+
+    <div id="resultMessage"></div>
+
+    <section class="summary">
+
+      <article class="summary-card">
+        <p>Total Pemilih</p>
+        <h2 id="totalVoters">-</h2>
+      </article>
+
+      <article class="summary-card">
+        <p>Total Suara Masuk</p>
+        <h2 id="totalVotes">-</h2>
+      </article>
+
+      <article class="summary-card">
+        <p>Partisipasi</p>
+        <h2 id="participationRate">-</h2>
+      </article>
+
+    </section>
+
+    <section class="result-section">
+
+      <h2>Perolehan Kandidat</h2>
+
+      <div id="candidateResults">
+        Memuat hasil...
+      </div>
+
+      <p class="note">
+        Hasil ditampilkan dalam bentuk agregat.
+        Sistem tidak menampilkan hubungan antara
+        pemilih dan kandidat yang dipilih.
+      </p>
+
+    </section>
+
+  </main>
+
+  <script
+    type="module"
+    src="/src/js/admin-results.js"
+  ></script>
+
+</body>
+</html>

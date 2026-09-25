@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Dashboard Admin | E-Voting</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b100d;
+      color: #ffffff;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 240px;
+      height: 100vh;
+      padding: 28px 20px;
+      background: #101713;
+      border-right: 1px solid #28322b;
+    }
+
+    .brand {
+      margin-bottom: 40px;
+    }
+
+    .brand h2 {
+      color: #ffffff;
+      margin-bottom: 5px;
+    }
+
+    .brand span {
+      color: #75b986;
+      font-size: 13px;
+    }
+
+    .nav a {
+      display: block;
+      padding: 13px 14px;
+      margin-bottom: 8px;
+      border-radius: 9px;
+      color: #b8c1bb;
+      text-decoration: none;
+    }
+
+    .nav a.active {
+      background: #245f37;
+      color: #ffffff;
+    }
+
+    .main {
+      margin-left: 240px;
+      padding: 34px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .topbar p {
+      color: #aab3ad;
+      margin-top: 6px;
+    }
+
+    #logoutButton {
+      border: 1px solid #445048;
+      background: transparent;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .status-box {
+      background: #121a15;
+      border: 1px solid #29362e;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 22px;
+    }
+
+    .status-label {
+      color: #aeb7b1;
+      font-size: 13px;
+      margin-bottom: 7px;
+    }
+
+    #electionStatus {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    .card {
+      background: #121a15;
+      border: 1px solid #29362e;
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .card p {
+      color: #aeb7b1;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .card h2 {
+      font-size: 29px;
+    }
+
+    .section {
+      background: #121a15;
+      border: 1px solid #29362e;
+      border-radius: 14px;
+      padding: 22px;
+    }
+
+    .section h2 {
+      margin-bottom: 20px;
+    }
+
+    .candidate-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 17px 0;
+      border-bottom: 1px solid #29332c;
+    }
+
+    .candidate-row:last-child {
+      border-bottom: none;
+    }
+
+    .candidate-number {
+      display: inline-block;
+      min-width: 35px;
+      color: #d8b95b;
+      font-weight: bold;
+    }
+
+    .candidate-votes {
+      font-weight: bold;
+      font-size: 19px;
+    }
+
+    #dashboardMessage {
+      display: none;
+      padding: 14px;
+      margin-bottom: 20px;
+      background: rgba(180, 50, 50, 0.15);
+      border: 1px solid #753b3b;
+      border-radius: 9px;
+      color: #ffb2b2;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+      }
+
+      .main {
+        margin-left: 0;
+        padding: 22px;
+      }
+
+      .cards {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 520px) {
+      .cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <aside class="sidebar">
+
+    <div class="brand">
+      <h2>E-Voting</h2>
+      <span>ADMINISTRATOR</span>
+    </div>
+
+    <nav class="nav">
+      <a href="#" class="active">
+        Dashboard
+      </a>
+
+      <a href="/admin-statistics.html">
+        Statistik
+      </a>
+
+      <a href="/admin-candidates.html">
+        Kandidat
+      </a>
+
+      <a href="/admin-voters.html">
+        Pemilih
+      </a>
+
+      <a href="/admin-results.html">
+        Hasil
+      </a>
+    </nav>
+
+  </aside>
+
+  <main class="main">
+
+    <header class="topbar">
+
+      <div>
+        <h1>Dashboard Admin</h1>
+        <p>
+          Monitoring pelaksanaan e-voting
+        </p>
+      </div>
+
+      <button id="logoutButton">
+        Keluar
+      </button>
+
+    </header>
+
+    <div id="dashboardMessage"></div>
+
+    <section class="status-box">
+      <div class="status-label">
+        STATUS PEMILIHAN
+      </div>
+
+      <div id="electionStatus">
+        Memuat...
+      </div>
+    </section>
+
+    <section class="cards">
+
+      <article class="card">
+        <p>Total Pemilih</p>
+        <h2 id="totalVoters">-</h2>
+      </article>
+
+      <article class="card">
+        <p>Sudah Memilih</p>
+        <h2 id="totalVoted">-</h2>
+      </article>
+
+      <article class="card">
+        <p>Belum Memilih</p>
+        <h2 id="totalNotVoted">-</h2>
+      </article>
+
+      <article class="card">
+        <p>Partisipasi</p>
+        <h2 id="participationRate">-</h2>
+      </article>
+
+    </section>
+
+    <section class="section">
+
+      <h2>Perolehan Suara</h2>
+
+      <div id="candidateResults">
+        Memuat data kandidat...
+      </div>
+
+    </section>
+
+  </main>
+
+  <script
+    type="module"
+    src="/src/js/admin-dashboard.js"
+  ></script>
+
+</body>
+</html>

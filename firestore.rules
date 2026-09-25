@@ -23,7 +23,8 @@ service cloud.firestore {
     }
 
     match /voters/{voterId} {
-      allow read, write: if false;
+      allow read: if isAdmin();
+      allow write: if false;
     }
 
     match /votes/{voteId} {
