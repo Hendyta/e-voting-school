@@ -6,18 +6,27 @@ import {
 
 import { auth } from "./firebase-config.js";
 
-const FUNCTIONS_BASE_URL =
-  import.meta.env.DEV
-    ? "http://127.0.0.1:5001/e-voting-school-2026/us-central1"
-    : "https://us-central1-e-voting-school-2026.cloudfunctions.net";
+const LOCAL_BACKEND_URL =
+  "http://192.168.1.16:3000";
 
+const PUBLIC_BACKEND_URL =
+  "https://ashley-ate-saved-stevens.trycloudflare.com";
+
+const isLocalAccess =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1" ||
+  window.location.hostname === "192.168.1.16";
+
+const BACKEND_BASE_URL =
+  isLocalAccess
+    ? LOCAL_BACKEND_URL
+    : PUBLIC_BACKEND_URL;
 
 const LOGIN_FUNCTION_URL =
-  `${FUNCTIONS_BASE_URL}/loginWithCode`;
-
+  `${BACKEND_BASE_URL}/login`;
 
 const SUBMIT_VOTE_FUNCTION_URL =
-  `${FUNCTIONS_BASE_URL}/submitVote`;
+  `${BACKEND_BASE_URL}/submit-vote`;
 
 export async function loginWithVoterCode(code) {
   const normalizedCode = String(code || "")
@@ -46,10 +55,16 @@ export async function loginWithVoterCode(code) {
 
   await signInWithCustomToken(auth, result.token);
 
+  // Auto-cache data voter session jika ada
+  if (result.voter) {
+    cacheVoterSession(result.voter);
+  }
+
   return result.voter;
 }
 
 export async function logoutVoter() {
+  clearVoterCache();
   await signOut(auth);
 }
 
@@ -130,4 +145,35 @@ export async function submitVote(
 
 
   return result;
+}
+
+// ==========================================
+// CACHING HELPER FOR FRONTEND OPTIMIZATION
+// ==========================================
+
+export function cacheVoterSession(voterData) {
+  if (voterData) {
+    sessionStorage.setItem("voter_session", JSON.stringify(voterData));
+  }
+}
+
+export function getCachedVoterSession() {
+  const cached = sessionStorage.getItem("voter_session");
+  return cached ? JSON.parse(cached) : null;
+}
+
+export function cacheCandidatesData(candidates) {
+  if (candidates) {
+    sessionStorage.setItem("candidates_cache", JSON.stringify(candidates));
+  }
+}
+
+export function getCachedCandidates() {
+  const cached = sessionStorage.getItem("candidates_cache");
+  return cached ? JSON.parse(cached) : null;
+}
+
+export function clearVoterCache() {
+  sessionStorage.removeItem("voter_session");
+  sessionStorage.removeItem("candidates_cache");
 }

@@ -68,7 +68,7 @@ app.use(express.json());
 
 const loginLimiter = rateLimit({
   windowMs: 60 * 1000,
-  limit: 10,
+  limit: 5000,
 
   standardHeaders: "draft-8",
   legacyHeaders: false,

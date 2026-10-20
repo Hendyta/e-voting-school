@@ -50,3 +50,6 @@ railway-backend/demo-30-voter-codes.local.csv
 
 # Firebase Admin credentials - NEVER COMMIT
 railway-backend/service-account*.json
+railway-backend/load-test-1000-codes.local.json
+railway-backend/create-1000-load-test-voters.js
+railway-backend/cleanup-1000-load-test-voters.js
