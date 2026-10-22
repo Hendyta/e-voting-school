@@ -1,12 +1,4 @@
-const path = require('path');
-
-// 1. Melayani file statis langsung dari folder src
-app.use(express.static(path.join(__dirname, 'src')));
-
-// 2. Rute utama mengarah ke index.html di dalam folder src
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'src', 'index.html'));
-});
+const path = require("path");
 const fs = require("fs");
 
 const localEnvPath = path.join(
@@ -31,7 +23,20 @@ const { admin, db } = require("./firebase-admin");
 
 const createSubmitVoteRoute = require("./submit-vote");
 
+// 1. Inisialisasi app HARUS di paling atas sebelum app.use/app.get
 const app = express();
+
+// 2. Middleware bawaan (jika ada)
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// 3. Melayani file statis dari folder src
+app.use(express.static(path.join(__dirname, 'src')));
+
+// 4. Rute utama ke index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'src', 'index.html'));
+});
 
 app.disable("x-powered-by");
 
