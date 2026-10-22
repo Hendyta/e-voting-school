@@ -1,13 +1,13 @@
 {
-  "cleanUrls": true,
+  "functions": {
+    "server.js": {
+      "includeFiles": "src/**"
+    }
+  },
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/server.js"
-    },
-    {
       "source": "/(.*)",
-      "destination": "/src/$1"
+      "destination": "/server.js"
     }
   ]
 }
