@@ -31,12 +31,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // 3. Melayani file statis dari folder src
-app.use(express.static(path.join(__dirname, 'src')));
+// app.use(express.static(path.join(__dirname, 'src')));
 
 // 4. Rute utama ke index.html
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'src', 'index.html'));
-});
+// app.get('/', (req, res) => {
+//  res.sendFile(path.join(__dirname, 'src', 'index.html'));
+//});
 
 app.disable("x-powered-by");
 
