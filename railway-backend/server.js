@@ -38,15 +38,36 @@ app.use(express.urlencoded({ extended: true }));
 //  res.sendFile(path.join(__dirname, 'src', 'index.html'));
 //});
 
-// 5. Path ke folder src
-const srcPath = path.join(process.cwd(), "src");
+// Fungsi untuk mencari lokasi folder 'src' yang benar di Vercel / Local
+function getSrcPath() {
+  const possiblePaths = [
+    path.join(process.cwd(), "src"),
+    path.join(process.cwd(), "railway-backend", "src"),
+    path.join(__dirname, "src"),
+    path.join(__dirname, "..", "src")
+  ];
 
-// 6. Sajikan file statis (CSS, JS, Gambar) dari folder src
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) {
+      return p;
+    }
+  }
+  return path.join(process.cwd(), "src");
+}
+
+const srcPath = getSrcPath();
+
+// 1. Sajikan file statis (CSS, JS, Gambar)
 app.use(express.static(srcPath));
 
-// 7. Rute utama menyajikan index.html
+// 2. Kirim index.html untuk rute utama
 app.get("/", (req, res) => {
-  res.sendFile(path.join(srcPath, "index.html"));
+  const indexPath = path.join(srcPath, "index.html");
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send("File index.html tidak ditemukan.");
+  }
 });
 
 app.disable("x-powered-by");
