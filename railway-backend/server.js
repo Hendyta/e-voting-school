@@ -479,3 +479,5 @@ app.listen(PORT, () => {
     `E-Voting Railway Backend berjalan di port ${PORT}`
   );
 });
+
+module.exports = app;
