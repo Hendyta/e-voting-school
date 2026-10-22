@@ -1,69 +1,37 @@
 const path = require("path");
 const fs = require("fs");
 
-const localEnvPath = path.join(
-  __dirname,
-  "../functions/.env.local"
-);
-
-if (fs.existsSync(localEnvPath)) {
-  require("dotenv").config({
-    path: localEnvPath,
-  });
-} else {
-  require("dotenv").config();
-}
-
-const express = require("express");
-const cors = require("cors");
-const crypto = require("crypto");
-const { rateLimit } = require("express-rate-limit");
-
-const { admin, db } = require("./firebase-admin");
-
-const createSubmitVoteRoute = require("./submit-vote");
-
-// 1. Inisialisasi app HARUS di paling atas sebelum app.use/app.get
-const app = express();
-
-// 2. Middleware bawaan (jika ada)
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// 3. Melayani file statis dari folder src
-// app.use(express.static(path.join(__dirname, 'src')));
-
-// 4. Rute utama ke index.html
-// app.get('/', (req, res) => {
-//  res.sendFile(path.join(__dirname, 'src', 'index.html'));
-//});
-
-function getSrcPath() {
-  const possiblePaths = [
+// Cari folder src secara presisi dari lokasi server.js berjalan
+function findSrcDirectory() {
+  const possibleLocations = [
     path.join(__dirname, "src"),
+    path.join(__dirname, "..", "src"),
     path.join(process.cwd(), "src"),
     path.join(process.cwd(), "railway-backend", "src")
   ];
 
-  for (const p of possiblePaths) {
-    if (fs.existsSync(p)) {
-      return p;
+  for (const dir of possibleLocations) {
+    if (fs.existsSync(dir) && fs.existsSync(path.join(dir, "index.html"))) {
+      return dir;
     }
   }
   return path.join(__dirname, "src");
 }
 
-const srcPath = getSrcPath();
+const srcPath = findSrcDirectory();
 
+// Sajikan file statis
 app.use(express.static(srcPath));
 
+// Rute utama
 app.get("/", (req, res) => {
   const indexPath = path.join(srcPath, "index.html");
   if (fs.existsSync(indexPath)) {
-    res.sendFile(indexPath);
-  } else {
-    res.status(404).send("File index.html tidak ditemukan.");
+    return res.sendFile(indexPath);
   }
+  
+  // Tampilkan pesan debug berisi path yang diperiksa jika masih gagal
+  res.status(404).send(`Debug Path: Searching at ${indexPath}`);
 });
 
 app.disable("x-powered-by");
