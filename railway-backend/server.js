@@ -1,4 +1,12 @@
-const path = require("path");
+const path = require('path');
+
+// 1. Melayani file statis langsung dari folder src
+app.use(express.static(path.join(__dirname, 'src')));
+
+// 2. Rute utama mengarah ke index.html di dalam folder src
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'src', 'index.html'));
+});
 const fs = require("fs");
 
 const localEnvPath = path.join(

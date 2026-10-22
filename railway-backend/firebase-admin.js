@@ -14,9 +14,9 @@ function getFirebaseCredential() {
     let serviceAccount;
 
     try {
-      serviceAccount = JSON.parse(
-        process.env.FIREBASE_SERVICE_ACCOUNT_JSON
-      );
+      // Membersihkan karakter newline atau spasi liar sebelum diparse
+      const rawJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON.trim();
+      serviceAccount = JSON.parse(rawJson);
     } catch (error) {
       throw new Error(
         "FIREBASE_SERVICE_ACCOUNT_JSON bukan JSON yang valid."
