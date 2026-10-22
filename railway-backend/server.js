@@ -6,17 +6,6 @@ const localEnvPath = path.join(
   "../functions/.env.local"
 );
 
-// Mengarahkan langsung ke folder src di root proyek
-const srcPath = path.join(process.cwd(), "src");
-
-// 1. Sajikan seluruh file statis (CSS, JS, Gambar) dari folder src
-app.use(express.static(srcPath));
-
-// 2. Kirim index.html ketika root (/) diakses
-app.get("/", (req, res) => {
-  res.sendFile(path.join(srcPath, "index.html"));
-});
-
 if (fs.existsSync(localEnvPath)) {
   require("dotenv").config({
     path: localEnvPath,
@@ -48,6 +37,17 @@ app.use(express.urlencoded({ extended: true }));
 // app.get('/', (req, res) => {
 //  res.sendFile(path.join(__dirname, 'src', 'index.html'));
 //});
+
+// 5. Path ke folder src
+const srcPath = path.join(process.cwd(), "src");
+
+// 6. Sajikan file statis (CSS, JS, Gambar) dari folder src
+app.use(express.static(srcPath));
+
+// 7. Rute utama menyajikan index.html
+app.get("/", (req, res) => {
+  res.sendFile(path.join(srcPath, "index.html"));
+});
 
 app.disable("x-powered-by");
 
