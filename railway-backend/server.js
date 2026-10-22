@@ -480,4 +480,8 @@ app.listen(PORT, () => {
   );
 });
 
+app.get('/', (req, res) => {
+  res.send('Backend E-Voting Aktif!');
+});
+
 module.exports = app;
