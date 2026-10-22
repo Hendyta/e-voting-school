@@ -116,12 +116,12 @@ function hashVoterCode(code) {
 // HEALTH CHECK
 // =========================
 
-app.get("/", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "E-Voting Railway Backend aktif.",
-  });
-});
+// app.get("/", (req, res) => {
+//  res.status(200).json({
+//    success: true,
+//    message: "E-Voting Railway Backend aktif.",
+//  });
+//});
 
 app.get("/health", (req, res) => {
   res.status(200).json({
