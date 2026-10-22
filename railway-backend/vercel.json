@@ -1,7 +1,7 @@
 {
   "functions": {
     "server.js": {
-      "includeFiles": ["src/**", "railway-backend/src/**"]
+      "includeFiles": "**/src/**"
     }
   },
   "rewrites": [

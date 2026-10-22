@@ -41,7 +41,6 @@ app.use(express.urlencoded({ extended: true }));
 function getSrcPath() {
   const possiblePaths = [
     path.join(__dirname, "src"),
-    path.join(__dirname, "public"),
     path.join(process.cwd(), "src"),
     path.join(process.cwd(), "railway-backend", "src")
   ];
@@ -53,6 +52,19 @@ function getSrcPath() {
   }
   return path.join(__dirname, "src");
 }
+
+const srcPath = getSrcPath();
+
+app.use(express.static(srcPath));
+
+app.get("/", (req, res) => {
+  const indexPath = path.join(srcPath, "index.html");
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send("File index.html tidak ditemukan.");
+  }
+});
 
 app.disable("x-powered-by");
 
