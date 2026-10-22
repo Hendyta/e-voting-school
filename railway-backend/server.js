@@ -474,11 +474,12 @@ app.use((error, req, res, next) => {
 // START SERVER
 // =========================
 
-app.listen(PORT, () => {
-  console.log(
-    `E-Voting Railway Backend berjalan di port ${PORT}`
-  );
-});
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
 
 app.get('/', (req, res) => {
   res.send('Backend E-Voting Aktif!');
