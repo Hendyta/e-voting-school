@@ -65,20 +65,37 @@ app.get("/", (req, res) => {
 app.post("/api/login", (req, res) => {
   const { voterCode } = req.body;
 
-  // Kode Dummy untuk Kelas X.1
-  const DUMMY_CODE = "X1-889A";
+  // Mengikuti aturan resmi: S-XXXXXX (Siswa) & G-XXXXXX (Guru)
+  const DUMMY_SISWA = "S-K7P4X9"; // Siswa Kelas X.1
+  const DUMMY_GURU  = "G-8M3P2L"; // Guru
 
   if (!voterCode) {
     return res.status(400).json({ success: false, message: "Kode voting wajib diisi!" });
   }
 
-  if (voterCode.toUpperCase().trim() === DUMMY_CODE) {
+  const cleanCode = voterCode.toUpperCase().trim();
+
+  if (cleanCode === DUMMY_SISWA) {
     return res.json({
       success: true,
       message: "Login berhasil",
       voter: {
-        code: DUMMY_CODE,
+        code: DUMMY_SISWA,
+        role: "siswa",
         class: "X.1",
+        hasVoted: false
+      }
+    });
+  }
+
+  if (cleanCode === DUMMY_GURU) {
+    return res.json({
+      success: true,
+      message: "Login berhasil",
+      voter: {
+        code: DUMMY_GURU,
+        role: "guru",
+        class: "GURU",
         hasVoted: false
       }
     });
