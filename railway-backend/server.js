@@ -48,13 +48,15 @@ app.use(express.urlencoded({ extended: true }));
 const srcPath = path.join(__dirname, "src");
 
 app.use(express.static(srcPath));
+app.use("/css", express.static(path.join(srcPath, "css")));
+app.use("/js", express.static(path.join(srcPath, "js")));
 
 app.get("/", (req, res) => {
   const indexPath = path.join(srcPath, "index.html");
   if (fs.existsSync(indexPath)) {
     return res.sendFile(indexPath);
   }
-  res.status(404).send("File index.html tidak ditemukan.");
+  res.status(404).send(`Debug Path Error: File index.html tidak ditemukan di path: ${indexPath}`);
 });
 
 // =========================
