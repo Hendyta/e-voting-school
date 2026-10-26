@@ -45,26 +45,12 @@ app.use(express.urlencoded({ extended: true }));
 // =========================
 // 3. STATIS FILE (FRONTEND)
 // =========================
-function getSrcFolder() {
-  const possibleLocations = [
-    path.join(__dirname, "src"),
-    path.join(process.cwd(), "src"),
-    path.join(process.cwd(), "railway-backend", "src"),
-    path.join(__dirname, "..", "src")
-  ];
+const srcPath = path.join(__dirname, "src");
 
-  for (const dir of possibleLocations) {
-    if (fs.existsSync(dir) && fs.existsSync(path.join(dir, "index.html"))) {
-      return dir;
-    }
-  }
-  return path.join(__dirname, "src");
-}
-
-const srcPath = getSrcFolder();
-
-// Sajikan file statis dari folder src
+// Sajikan file statis langsung (CSS, JS, Gambar)
 app.use(express.static(srcPath));
+app.use("/css", express.static(path.join(srcPath, "css")));
+app.use("/js", express.static(path.join(srcPath, "js")));
 
 // Rute utama menyajikan index.html
 app.get("/", (req, res) => {
