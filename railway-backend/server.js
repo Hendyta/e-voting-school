@@ -63,7 +63,7 @@ function resolveSrcPath() {
 
 const srcPath = resolveSrcPath();
 
-// Express melayani aset statis
+// Sajikan folder root src DAN subfolder aset secara spesifik
 app.use(express.static(srcPath));
 app.use("/css", express.static(path.join(srcPath, "css")));
 app.use("/js", express.static(path.join(srcPath, "js")));
