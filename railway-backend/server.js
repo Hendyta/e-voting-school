@@ -45,11 +45,14 @@ app.use(express.urlencoded({ extended: true }));
 // =========================
 // 3. STATIS FILE (FRONTEND)
 // =========================
-// Karena src sekarang sudah di dalam railway-backend, path ini 100% presisi
 const srcPath = path.join(__dirname, "src");
 
+// Daftarkan rute statis utama dan subfolder aset secara eksplisit
 app.use(express.static(srcPath));
+app.use("/css", express.static(path.join(srcPath, "css")));
+app.use("/js", express.static(path.join(srcPath, "js")));
 
+// Rute utama menyajikan index.html
 app.get("/", (req, res) => {
   const indexPath = path.join(srcPath, "index.html");
   if (fs.existsSync(indexPath)) {
