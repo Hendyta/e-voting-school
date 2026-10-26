@@ -45,34 +45,18 @@ app.use(express.urlencoded({ extended: true }));
 // =========================
 // 3. STATIS FILE (FRONTEND)
 // =========================
-function resolveSrcPath() {
-  const candidates = [
-    path.join(__dirname, "src"),
-    path.join(process.cwd(), "railway-backend", "src"),
-    path.join(process.cwd(), "src"),
-    path.join(__dirname, "..", "src"),
-  ];
+const srcPath = path.join(__dirname, "src");
 
-  for (const p of candidates) {
-    if (fs.existsSync(p) && fs.existsSync(path.join(p, "index.html"))) {
-      return p;
-    }
-  }
-  return path.join(__dirname, "src");
-}
-
-const srcPath = resolveSrcPath();
-
-// Sajikan file statis di root
 app.use(express.static(srcPath));
+app.use("/css", express.static(path.join(srcPath, "css")));
+app.use("/js", express.static(path.join(srcPath, "js")));
 
-// Rute utama menyajikan index.html
 app.get("/", (req, res) => {
   const indexPath = path.join(srcPath, "index.html");
   if (fs.existsSync(indexPath)) {
     return res.sendFile(indexPath);
   }
-  res.status(404).send(`Debug Path Error: File index.html tidak ditemukan di path: ${indexPath}`);
+  res.status(404).send("File index.html tidak ditemukan.");
 });
 
 // =========================
