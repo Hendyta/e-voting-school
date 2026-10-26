@@ -1,13 +1,56 @@
+const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const cors = require("cors");
+const crypto = require("crypto");
+const { rateLimit } = require("express-rate-limit");
 
-// Cari folder src secara presisi dari lokasi server.js berjalan
-function findSrcDirectory() {
+const { admin, db } = require("./firebase-admin");
+const createSubmitVoteRoute = require("./submit-vote");
+
+const app = express();
+
+app.disable("x-powered-by");
+
+// =========================
+// 1. KONFIGURASI CORS
+// =========================
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://192.168.1.16:5173",
+];
+
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(process.env.FRONTEND_URL.replace(/\/+$/, ""));
+}
+
+const corsOptions = {
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error("Origin tidak diizinkan oleh CORS."));
+  },
+};
+
+app.use(cors(corsOptions));
+
+// =========================
+// 2. MIDDLEWARE PARSING BODY
+// =========================
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// =========================
+// 3. STATIS FILE (FRONTEND)
+// =========================
+function getSrcFolder() {
   const possibleLocations = [
     path.join(__dirname, "src"),
-    path.join(__dirname, "..", "src"),
     path.join(process.cwd(), "src"),
-    path.join(process.cwd(), "railway-backend", "src")
+    path.join(process.cwd(), "railway-backend", "src"),
+    path.join(__dirname, "..", "src")
   ];
 
   for (const dir of possibleLocations) {
@@ -18,90 +61,43 @@ function findSrcDirectory() {
   return path.join(__dirname, "src");
 }
 
-const srcPath = findSrcDirectory();
+const srcPath = getSrcFolder();
 
-// Sajikan file statis
+// Sajikan file statis dari folder src
 app.use(express.static(srcPath));
 
-// Rute utama
+// Rute utama menyajikan index.html
 app.get("/", (req, res) => {
   const indexPath = path.join(srcPath, "index.html");
   if (fs.existsSync(indexPath)) {
     return res.sendFile(indexPath);
   }
-  
-  // Tampilkan pesan debug berisi path yang diperiksa jika masih gagal
-  res.status(404).send(`Debug Path: Searching at ${indexPath}`);
+  res.status(404).send(`Debug Path Error: File index.html tidak ditemukan di path: ${indexPath}`);
 });
 
-app.disable("x-powered-by");
-
-const PORT = process.env.PORT || 3000;
-
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://127.0.0.1:5173",
-  "http://192.168.1.16:5173",
-];
-
-if (process.env.FRONTEND_URL) {
-  allowedOrigins.push(
-    process.env.FRONTEND_URL.replace(/\/+$/, "")
-  );
-}
-
-const corsOptions = {
-  origin(origin, callback) {
-    // Request tanpa Origin tetap diperbolehkan.
-    // Contoh: curl, Apps Script, health check.
-    if (!origin) {
-      return callback(null, true);
-    }
-
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-
-    return callback(
-      new Error("Origin tidak diizinkan oleh CORS.")
-    );
-  },
-};
-
-app.use(cors(corsOptions));
-app.use(express.json());
-
 // =========================
-// LOGIN RATE LIMITER
+// 4. RATE LIMITER & UTILS
 // =========================
-
 const loginLimiter = rateLimit({
   windowMs: 60 * 1000,
   limit: 5000,
-
   standardHeaders: "draft-8",
   legacyHeaders: false,
-
   message: {
     success: false,
-    message:
-      "Terlalu banyak percobaan login. Silakan coba lagi sebentar.",
+    message: "Terlalu banyak percobaan login. Silakan coba lagi sebentar.",
   },
 });
 
 function normalizeVoterCode(code) {
-  return String(code || "")
-    .trim()
-    .toUpperCase();
+  return String(code || "").trim().toUpperCase();
 }
 
 function hashVoterCode(code) {
   const secret = process.env.VOTER_CODE_HMAC_SECRET;
-
   if (!secret) {
     throw new Error("VOTER_CODE_HMAC_SECRET belum tersedia.");
   }
-
   return crypto
     .createHmac("sha256", secret)
     .update(normalizeVoterCode(code))
@@ -109,16 +105,8 @@ function hashVoterCode(code) {
 }
 
 // =========================
-// HEALTH CHECK
+// 5. RUTE API BACKEND
 // =========================
-
-// app.get("/", (req, res) => {
-//  res.status(200).json({
-//    success: true,
-//    message: "E-Voting Railway Backend aktif.",
-//  });
-//});
-
 app.get("/health", (req, res) => {
   res.status(200).json({
     success: true,
@@ -126,14 +114,7 @@ app.get("/health", (req, res) => {
   });
 });
 
-// =========================
-// LOGIN VOTER
-// =========================
-
-app.post(
-  "/login",
-  loginLimiter,
-  async (req, res) => {
+app.post("/login", loginLimiter, async (req, res) => {
   try {
     const code = req.body?.code;
 
@@ -145,7 +126,6 @@ app.post(
     }
 
     const normalizedCode = normalizeVoterCode(code);
-
     const codePattern = /^[SG]-[A-Z2-9]{6}$/;
 
     if (!codePattern.test(normalizedCode)) {
@@ -181,53 +161,52 @@ app.post(
     }
 
     if (voterData.hasVoted === true) {
-  return res.status(403).json({
-    success: false,
-    message: "Kode ini sudah digunakan untuk voting.",
-  });
-}
+      return res.status(403).json({
+        success: false,
+        message: "Kode ini sudah digunakan untuk voting.",
+      });
+    }
 
-const electionId = voterData.electionId;
+    const electionId = voterData.electionId;
 
-if (!electionId) {
-  return res.status(403).json({
-    success: false,
-    message: "Kode voter tidak dapat digunakan.",
-  });
-}
+    if (!electionId) {
+      return res.status(403).json({
+        success: false,
+        message: "Kode voter tidak dapat digunakan.",
+      });
+    }
 
-const electionDoc = await db
-  .collection("elections")
-  .doc(electionId)
-  .get();
+    const electionDoc = await db
+      .collection("elections")
+      .doc(electionId)
+      .get();
 
-if (!electionDoc.exists) {
-  return res.status(403).json({
-    success: false,
-    message: "Pemilihan tidak tersedia.",
-  });
-}
+    if (!electionDoc.exists) {
+      return res.status(403).json({
+        success: false,
+        message: "Pemilihan tidak tersedia.",
+      });
+    }
 
-const electionData = electionDoc.data();
+    const electionData = electionDoc.data();
+    const startAt = electionData.startAt?.toDate?.();
+    const endAt = electionData.endAt?.toDate?.();
+    const now = new Date();
 
-const startAt = electionData.startAt?.toDate?.();
-const endAt = electionData.endAt?.toDate?.();
-const now = new Date();
+    if (
+      electionData.status !== "active" ||
+      !startAt ||
+      !endAt ||
+      now < startAt ||
+      now > endAt
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "Pemilihan belum dibuka atau sudah ditutup.",
+      });
+    }
 
-if (
-  electionData.status !== "active" ||
-  !startAt ||
-  !endAt ||
-  now < startAt ||
-  now > endAt
-) {
-  return res.status(403).json({
-    success: false,
-    message: "Pemilihan belum dibuka atau sudah ditutup.",
-  });
-}
-
-const customToken = await admin.auth().createCustomToken(
+    const customToken = await admin.auth().createCustomToken(
       voterDoc.id,
       {
         role: voterData.role,
@@ -246,7 +225,6 @@ const customToken = await admin.auth().createCustomToken(
     });
   } catch (error) {
     console.error("Login error:", error);
-
     return res.status(500).json({
       success: false,
       message: "Terjadi kesalahan pada server.",
@@ -254,40 +232,23 @@ const customToken = await admin.auth().createCustomToken(
   }
 });
 
-const submitVoteRoute = createSubmitVoteRoute({
-  admin,
-  db,
-});
-
+const submitVoteRoute = createSubmitVoteRoute({ admin, db });
 app.post("/submit-vote", submitVoteRoute);
-
-// =========================
-// SPREADSHEET SUMMARY
-// =========================
 
 app.get("/spreadsheet-summary", async (req, res) => {
   try {
-    const spreadsheetApiKey =
-      process.env.SPREADSHEET_API_KEY;
-
-    const providedApiKey =
-      req.get("X-Spreadsheet-Key");
+    const spreadsheetApiKey = process.env.SPREADSHEET_API_KEY;
+    const providedApiKey = req.get("X-Spreadsheet-Key");
 
     if (!spreadsheetApiKey) {
-      console.error(
-        "SPREADSHEET_API_KEY belum tersedia di server."
-      );
-
+      console.error("SPREADSHEET_API_KEY belum tersedia di server.");
       return res.status(500).json({
         success: false,
         message: "Konfigurasi Spreadsheet belum tersedia.",
       });
     }
 
-    if (
-      !providedApiKey ||
-      providedApiKey !== spreadsheetApiKey
-    ) {
+    if (!providedApiKey || providedApiKey !== spreadsheetApiKey) {
       return res.status(401).json({
         success: false,
         message: "Akses tidak diizinkan.",
@@ -322,39 +283,9 @@ app.get("/spreadsheet-summary", async (req, res) => {
     }
 
     const classNames = [
-      "X.1",
-      "X.2",
-      "X.3",
-      "X.4",
-      "X.5",
-      "X.6",
-      "X.7",
-      "X.8",
-      "X.9",
-      "X.10",
-
-      "XI.1",
-      "XI.2",
-      "XI.3",
-      "XI.4",
-      "XI.5",
-      "XI.6",
-      "XI.7",
-      "XI.8",
-      "XI.9",
-      "XI.10",
-
-      "XII.1",
-      "XII.2",
-      "XII.3",
-      "XII.4",
-      "XII.5",
-      "XII.6",
-      "XII.7",
-      "XII.8",
-      "XII.9",
-      "XII.10",
-      "XII.11",
+      "X.1", "X.2", "X.3", "X.4", "X.5", "X.6", "X.7", "X.8", "X.9", "X.10",
+      "XI.1", "XI.2", "XI.3", "XI.4", "XI.5", "XI.6", "XI.7", "XI.8", "XI.9", "XI.10",
+      "XII.1", "XII.2", "XII.3", "XII.4", "XII.5", "XII.6", "XII.7", "XII.8", "XII.9", "XII.10", "XII.11",
     ];
 
     const classDocs = await Promise.all(
@@ -364,12 +295,9 @@ app.get("/spreadsheet-summary", async (req, res) => {
     );
 
     const classes = {};
-
     classNames.forEach((className, index) => {
       const doc = classDocs[index];
-
       const data = doc.exists ? doc.data() : {};
-
       classes[className] = {
         totalVoters: data.totalVoters || 0,
         voted: data.totalVoted || 0,
@@ -383,39 +311,24 @@ app.get("/spreadsheet-summary", async (req, res) => {
     const student = studentDoc.exists ? studentDoc.data() : {};
     const teacher = teacherDoc.exists ? teacherDoc.data() : {};
 
-    const candidate1 = candidate1Doc.exists
-      ? candidate1Doc.data()
-      : {};
-
-    const candidate2 = candidate2Doc.exists
-      ? candidate2Doc.data()
-      : {};
-
-    const candidate3 = candidate3Doc.exists
-      ? candidate3Doc.data()
-      : {};
+    const candidate1 = candidate1Doc.exists ? candidate1Doc.data() : {};
+    const candidate2 = candidate2Doc.exists ? candidate2Doc.data() : {};
+    const candidate3 = candidate3Doc.exists ? candidate3Doc.data() : {};
 
     return res.status(200).json({
       success: true,
-
       election: {
         id: electionId,
         status: election.status || null,
-        startAt: election.startAt
-          ? election.startAt.toDate().toISOString()
-          : null,
-        endAt: election.endAt
-          ? election.endAt.toDate().toISOString()
-          : null,
+        startAt: election.startAt ? election.startAt.toDate().toISOString() : null,
+        endAt: election.endAt ? election.endAt.toDate().toISOString() : null,
       },
-
       global: {
         totalVoters: global.totalVoters || 0,
         voted: global.totalVoted || 0,
         notVoted: global.totalNotVoted || 0,
         participationRate: global.participationRate || 0,
       },
-
       roles: {
         student: {
           totalVoters: student.totalVoters || 0,
@@ -423,32 +336,22 @@ app.get("/spreadsheet-summary", async (req, res) => {
           notVoted: student.totalNotVoted || 0,
           participationRate: student.participationRate || 0,
         },
-
         teacher: {
-        totalVoters: teacher.totalVoters || 0,
-        voted: teacher.totalVoted || 0,
-        notVoted: teacher.totalNotVoted || 0,
-        participationRate: teacher.participationRate || 0,
+          totalVoters: teacher.totalVoters || 0,
+          voted: teacher.totalVoted || 0,
+          notVoted: teacher.totalNotVoted || 0,
+          participationRate: teacher.participationRate || 0,
+        },
       },
-      },
-
       classes,
-
       candidates: {
-        "candidate-001": {
-          totalVotes: candidate1.totalVotes || 0,
-        },
-        "candidate-002": {
-          totalVotes: candidate2.totalVotes || 0,
-        },
-        "candidate-003": {
-          totalVotes: candidate3.totalVotes || 0,
-        },
+        "candidate-001": { totalVotes: candidate1.totalVotes || 0 },
+        "candidate-002": { totalVotes: candidate2.totalVotes || 0 },
+        "candidate-003": { totalVotes: candidate3.totalVotes || 0 },
       },
     });
   } catch (error) {
     console.error("Spreadsheet summary error:", error);
-
     return res.status(500).json({
       success: false,
       message: "Gagal mengambil data rekap.",
@@ -457,14 +360,10 @@ app.get("/spreadsheet-summary", async (req, res) => {
 });
 
 // =========================
-// ERROR HANDLER
+// 6. ERROR HANDLER
 // =========================
-
 app.use((error, req, res, next) => {
-  if (
-    error &&
-    error.message === "Origin tidak diizinkan oleh CORS."
-  ) {
+  if (error && error.message === "Origin tidak diizinkan oleh CORS.") {
     return res.status(403).json({
       success: false,
       message: "Origin tidak diizinkan.",
@@ -472,7 +371,6 @@ app.use((error, req, res, next) => {
   }
 
   console.error("Unhandled server error:", error);
-
   return res.status(500).json({
     success: false,
     message: "Terjadi kesalahan pada server.",
@@ -480,18 +378,14 @@ app.use((error, req, res, next) => {
 });
 
 // =========================
-// START SERVER
+// 7. LISTEN & EXPORT
 // =========================
-
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
 }
 
-app.get('/', (req, res) => {
-  res.send('Backend E-Voting Aktif!');
-});
-
+// PERBAIKAN FATAL: Diletakkan di paling akhir file
 module.exports = app;
