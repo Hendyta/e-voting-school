@@ -60,6 +60,34 @@ app.get("/", (req, res) => {
 });
 
 // =========================
+// API ROUTE: VALIDASI KODE
+// =========================
+app.post("/api/login", (req, res) => {
+  const { voterCode } = req.body;
+
+  // Kode Dummy untuk Kelas X.1
+  const DUMMY_CODE = "X1-889A";
+
+  if (!voterCode) {
+    return res.status(400).json({ success: false, message: "Kode voting wajib diisi!" });
+  }
+
+  if (voterCode.toUpperCase().trim() === DUMMY_CODE) {
+    return res.json({
+      success: true,
+      message: "Login berhasil",
+      voter: {
+        code: DUMMY_CODE,
+        class: "X.1",
+        hasVoted: false
+      }
+    });
+  }
+
+  return res.status(401).json({ success: false, message: "Kode voting tidak valid!" });
+});
+
+// =========================
 // 4. RATE LIMITER & UTILS
 // =========================
 const loginLimiter = rateLimit({

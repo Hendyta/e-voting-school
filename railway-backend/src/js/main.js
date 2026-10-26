@@ -1,31 +1,13 @@
-import {
-  loginWithVoterCode,
-  observeAuthState,
-} from "./auth.js";
-
-const loginForm =
-  document.getElementById("loginForm");
-
-const voterCodeInput =
-  document.getElementById("voterCode");
-
-const loginButton =
-  document.getElementById("loginButton");
-
-const message =
-  document.getElementById("message");
+const loginForm = document.getElementById("loginForm");
+const voterCodeInput = document.getElementById("voterCode");
+const loginButton = document.getElementById("loginButton");
+const message = document.getElementById("message");
 
 let isLoggingIn = false;
 
 function setMessage(text, type = "") {
   message.textContent = text;
-
-  message.classList.remove(
-    "success",
-    "error",
-    "loading"
-  );
-
+  message.classList.remove("success", "error", "loading");
   if (type) {
     message.classList.add(type);
   }
@@ -33,92 +15,59 @@ function setMessage(text, type = "") {
 
 function setLoginLoading(isLoading) {
   isLoggingIn = isLoading;
-
   loginButton.disabled = isLoading;
   voterCodeInput.disabled = isLoading;
-
-  loginButton.textContent =
-    isLoading
-      ? "MEMPROSES..."
-      : "MASUK";
+  loginButton.textContent = isLoading ? "MEMPROSES..." : "MASUK";
 }
 
-observeAuthState((user) => {
-  if (!user) {
+// Auto uppercase saat ketik
+voterCodeInput.addEventListener("input", () => {
+  voterCodeInput.value = voterCodeInput.value.toUpperCase().replace(/\s+/g, "");
+  setMessage("");
+});
+
+loginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  if (isLoggingIn) return;
+
+  const code = voterCodeInput.value.trim().toUpperCase();
+
+  if (!code) {
+    setMessage("Kode voting wajib diisi.", "error");
+    voterCodeInput.focus();
     return;
   }
 
-  window.location.replace(
-    "/candidates.html"
-  );
-});
+  try {
+    setLoginLoading(true);
+    setMessage("Memeriksa kode voting...", "loading");
 
-voterCodeInput.addEventListener(
-  "input",
-  () => {
-    voterCodeInput.value =
-      voterCodeInput.value
-        .toUpperCase()
-        .replace(/\s+/g, "");
+    // Panggil Endpoint API Backend
+    const response = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ voterCode: code })
+    });
 
-    setMessage("");
-  }
-);
+    const data = await response.json();
 
-loginForm.addEventListener(
-  "submit",
-  async (event) => {
-    event.preventDefault();
+    if (data.success) {
+      sessionStorage.setItem("voterData", JSON.stringify(data.voter));
+      setMessage("Login berhasil. Mengarahkan...", "success");
 
-    if (isLoggingIn) {
-      return;
-    }
-
-    const code =
-      voterCodeInput.value
-        .trim()
-        .toUpperCase();
-
-    if (!code) {
-      setMessage(
-        "Kode voting wajib diisi.",
-        "error"
-      );
-
-      voterCodeInput.focus();
-      return;
-    }
-
-    try {
-      setLoginLoading(true);
-
-      setMessage(
-        "Memeriksa kode voting...",
-        "loading"
-      );
-
-      await loginWithVoterCode(code);
-
-      setMessage(
-        "Login berhasil. Mengarahkan...",
-        "success"
-      );
-
-    } catch (error) {
-      console.error(
-        "Login voter gagal:",
-        error
-      );
-
-      setMessage(
-        error.message ||
-          "Login gagal. Silakan coba kembali.",
-        "error"
-      );
-
+      setTimeout(() => {
+        window.location.href = "./candidates.html";
+      }, 800);
+    } else {
+      setMessage(data.message || "Kode voting tidak valid.", "error");
       setLoginLoading(false);
-
       voterCodeInput.focus();
     }
+  } catch (error) {
+    console.error("Login voter gagal:", error);
+    setMessage("Terjadi kesalahan koneksi server.", "error");
+    setLoginLoading(false);
+    voterCodeInput.focus();
   }
-);
+});

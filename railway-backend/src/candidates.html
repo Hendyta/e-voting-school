@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kandidat | E-Voting Sekolah</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body class="login-page">
+
+  <main class="login-container">
+    <section class="login-card" style="max-width: 600px;">
+      <div class="login-header">
+        <h1>SURAT SUARA DIGITAL</h1>
+        <p id="voterInfo" class="login-description">Memuat data pemilih...</p>
+      </div>
+
+      <div style="display: flex; gap: 15px; margin-top: 20px;">
+        <div style="border: 1px solid #ccc; padding: 15px; border-radius: 8px; flex: 1; text-align: center;">
+          <h3>PASLON 01</h3>
+          <p>Kandidat A & B</p>
+          <button class="login-button" onclick="alert('Voting Paslon 1 Berhasil!')">PILIH 01</button>
+        </div>
+
+        <div style="border: 1px solid #ccc; padding: 15px; border-radius: 8px; flex: 1; text-align: center;">
+          <h3>PASLON 02</h3>
+          <p>Kandidat C & D</p>
+          <button class="login-button" onclick="alert('Voting Paslon 2 Berhasil!')">PILIH 02</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const voterData = JSON.parse(sessionStorage.getItem("voterData"));
+    if (!voterData) {
+      window.location.href = "./index.html";
+    } else {
+      document.getElementById("voterInfo").textContent = 
+        `Selamat Datang Pemilih Kelas ${voterData.class} (Kode: ${voterData.code})`;
+    }
+  </script>
+</body>
+</html>
