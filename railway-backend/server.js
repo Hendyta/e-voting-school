@@ -45,9 +45,25 @@ app.use(express.urlencoded({ extended: true }));
 // =========================
 // 3. STATIS FILE (FRONTEND)
 // =========================
-const srcPath = path.join(__dirname, "src");
+function resolveSrcPath() {
+  const candidates = [
+    path.join(process.cwd(), "src"),
+    path.join(process.cwd(), "railway-backend", "src"),
+    path.join(__dirname, "src"),
+    path.join(__dirname, "..", "src")
+  ];
 
-// Sajikan file statis langsung (CSS, JS, Gambar)
+  for (const p of candidates) {
+    if (fs.existsSync(p) && fs.existsSync(path.join(p, "index.html"))) {
+      return p;
+    }
+  }
+  return path.join(process.cwd(), "src");
+}
+
+const srcPath = resolveSrcPath();
+
+// Sajikan statis root & subfolder css/js
 app.use(express.static(srcPath));
 app.use("/css", express.static(path.join(srcPath, "css")));
 app.use("/js", express.static(path.join(srcPath, "js")));
