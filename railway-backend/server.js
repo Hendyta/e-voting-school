@@ -45,9 +45,25 @@ app.use(express.urlencoded({ extended: true }));
 // =========================
 // 3. STATIS FILE (FRONTEND)
 // =========================
-const srcPath = path.join(process.cwd(), "src");
+function resolveSrcPath() {
+  const candidates = [
+    path.join(__dirname, "src"),
+    path.join(process.cwd(), "railway-backend", "src"),
+    path.join(process.cwd(), "src"),
+    path.join(__dirname, "..", "src"),
+  ];
 
-// Cukup 1 baris ini untuk menyajikan SEMUA isi folder src (html, css, js) di root
+  for (const p of candidates) {
+    if (fs.existsSync(p) && fs.existsSync(path.join(p, "index.html"))) {
+      return p;
+    }
+  }
+  return path.join(__dirname, "src");
+}
+
+const srcPath = resolveSrcPath();
+
+// Sajikan file statis di root
 app.use(express.static(srcPath));
 
 // Rute utama menyajikan index.html
