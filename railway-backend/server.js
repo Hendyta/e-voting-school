@@ -50,7 +50,7 @@ function resolveSrcPath() {
     path.join(process.cwd(), "src"),
     path.join(process.cwd(), "railway-backend", "src"),
     path.join(__dirname, "src"),
-    path.join(__dirname, "..", "src")
+    path.join(__dirname, "..", "src"),
   ];
 
   for (const p of candidates) {
@@ -63,7 +63,7 @@ function resolveSrcPath() {
 
 const srcPath = resolveSrcPath();
 
-// Sajikan statis root & subfolder css/js
+// Express melayani aset statis
 app.use(express.static(srcPath));
 app.use("/css", express.static(path.join(srcPath, "css")));
 app.use("/js", express.static(path.join(srcPath, "js")));
